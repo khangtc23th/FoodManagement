@@ -1,0 +1,28 @@
+﻿using Core.Database.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Web.Areas.Admin.Extensions;
+using Core.Database.Models;
+
+namespace Web.Areas.Admin.Filters
+{
+    public class CustomActionFilters : IActionFilter
+    {
+        public void OnActionExecuted(ActionExecutedContext context)
+        {
+        }
+
+        public void OnActionExecuting(ActionExecutingContext context)
+        {
+            var area = context.RouteData.Values["area"];
+            if (context.RouteData.Values["action"].ToString() != "Login" && area ?. ToString()=="Admin")
+            {
+                var member = context.HttpContext.Session.GetObject<Member>("member");
+                if (member == null)
+                {
+                    context.Result = new RedirectResult("/Admin/Member/Login");
+                }
+            }
+        }
+    }
+}
